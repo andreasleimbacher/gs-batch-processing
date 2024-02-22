@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BatchProcessingApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <module name="batch-processing.main" />
+    <option name="PROGRAM_PARAMETERS" value="importUserJob" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.batchprocessing.BatchProcessingApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
