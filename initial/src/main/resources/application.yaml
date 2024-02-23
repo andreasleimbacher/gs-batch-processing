@@ -1,4 +1,31 @@
 spring:
   batch:
     job:
-      enabled: true
+      enabled: false  # true here means job is executed at startup
+
+server:
+  port : 8084
+
+logging:
+  file:
+    name: build/batch-processing.log
+
+  level:
+    root: INFO
+
+    # spring-framework configuration resolving
+    org.springframework.core.env: INFO
+    org.springframework.transaction: TRACE # TRACE
+
+    # spring-security logging
+    org.springframework.security: INFO
+    # spring-ws messages logging (TRACE shows SOAP message request/response)
+    org.springframework.ws.client.MessageTracing.sent: INFO
+    org.springframework.ws.client.MessageTracing.received: INFO
+    org.springframework.ws.server.MessageTracing.sent: INFO
+    org.springframework.ws.server.MessageTracing.received: INFO
+    # optrace logging - jcan.Op 'DEBUG' shows incoming calls as well
+    ch.nevis.jcan.optrace.common.config.ConfigHelper: WARN
+    com.zaxxer.hikari: DEBUG
+
+

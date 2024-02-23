@@ -11,10 +11,16 @@ import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
+
+// https://www.baeldung.com/spring-batch-start-stop-job
 
 @Configuration
 public class BatchConfiguration {
@@ -26,14 +32,22 @@ public class BatchConfiguration {
 				.build();
 	}
 
+
+	// https://docs.spring.io/spring-batch/reference/scalability.html
+	@Bean("myExecutor")
+	public TaskExecutor taskExecutor() {
+		return new SimpleAsyncTaskExecutor("spring_batch");
+	}
+
 	@Bean
-	public Step step1(JobRepository jobRepository, DataSourceTransactionManager transactionManager,
+	public Step step1(@Qualifier("myExecutor") TaskExecutor taskExecutor, JobRepository jobRepository, DataSourceTransactionManager transactionManager,
 			FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
 		return new StepBuilder("step1", jobRepository)
 				.<Person, Person> chunk(3, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)
+				.taskExecutor(taskExecutor)
 				.build();
 	}
 
@@ -60,5 +74,10 @@ public class BatchConfiguration {
 				.dataSource(dataSource)
 				.beanMapped()
 				.build();
+	}
+
+	@Bean
+	public DataSourceTransactionManager txManager(DataSource dataSource) {
+		return new DataSourceTransactionManager(dataSource);
 	}
 }
